@@ -3,7 +3,7 @@
 ## About
 **UFF - UNIVERSIDADE FEDERAL FLUMINENSE**
 **AUTHORS:**   Lucas Fuzato Cipriano, Mariana Suarez de Oliveira
-**CLASS:**     Algorithm Desingn and Analysis.
+**CLASS:**     Algorithm Design and Analysis.
 **PROFESSOR:** Mr. Celso da Cruz de Oliveira
 
 ## Overview
@@ -54,12 +54,12 @@ safe edges, therefore we quit.
 Any solution that fits the description of the genereric one is solves the MST for optimal value. In this project,
 two are of most interest: Kruskall and Prim.
 
-### Kruskall Solution
+### Kruskal Solution
 
 The algorithm, introduced in 1956, by joseph kruskall, have the following pseudocode
 
 ```
-KRUSKALL-MST( V , E )
+KRUSKAL-MST( V , E )
 
     Va = {}
     Ea = {}
@@ -102,31 +102,54 @@ implies that **T1** and **T2** must be replaced by the union of both.
 ```
 PRIM-MST( V , E )
 
+    // 1
     x = RANDOM( V )
     Va = { x }
     Ea = {}
 
+    // 2
     P = CONNECTING-EDGES( x , E )
-    UNVISITED = {}
 
-    while UNVISITED != {}
-        e = ARG-MIN-WEIGHT( P , E )
+    // 3
+    Q = COPY( V )
+    while Q != {}
+
+        // 4
+        e = ARG-MIN-WEIGHT( P )
         P = P - { e }
         
-        ( a , b ) = edge
+        ( a , b ) = e
         if ( a in Va ) and ( b in Va )
             continue
         
         Ea = Ea + { e }
         y = { y' | y' in e , y not in Va }
         Va = Va + { y }
-        UNNVISITED = UNVISITED - { y }
 
-        P' = CONNECTING-EDGES( x , E )
+        // 5
+        Q = Q - { y }
+        P' = CONNECTING-EDGES( y , E )
         P = P + P'
 
     return Va , Ea
 ```
+
+1 - Unlike kruskal, that gives a every edge a tree, prim initializes a single tree with one edge, and builds 
+the solution from there.
+
+2 - **CONNECTING-EDGES( x , E )** is a function whicht given a node **x** and a set of edges **E**, it returns
+a subset of **E** where every edge have one of its nodes equal to **x**. Thus the value **P** represent the pool
+of possible new edges of desired tree.
+
+3 - **Q** is the set of nodes of the graph that are not yet visited by the tree. When the tree spans all nodes, Q
+will be empty.
+
+4 - **ARG-MIN-WEIGHT( P )** returns the edge with the smallest weight. if **e** is such edge, it will be verified
+for safety. If safe, it will be added to the set of edges of the tree, if not, it will be discarded. Anyway, it doesn't
+need to go back to **P**
+
+5 - **y** is the new node of the tree, if **e** is safe. **P** must now include all the edges that connect to **y**.
+Since it is now part of the desired tree, the node must be removed from **Q**.
 
 ### Proof of correctness
 
