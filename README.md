@@ -64,21 +64,38 @@ KRUSKALL-MST( V , E )
     Va = {}
     Ea = {}
 
-    E' = SORT-WEIGHT( E )
+    E' = SORT-WEIGHT( E )  //1
+    T = { { x } | x in V } //2
 
     for e in E'
-        if not SAFE( e , Va )
-            continue
-        Ea = Ea + { e }
+        ( a , b ) = e
 
+        T1 = TREE( a , T ) // 3
+        T2 = TREE( b , T )
+        if T1 == T2
+            continue
+
+        Ea = Ea + { e }
         y = { y' | y' in e , y not in Va }
         Va = Va + y
-    
+
+        //4
+        T = T - T1
+        T = T - T2
+        T = T + MERGE( T1 , T2 )
     return Va , Ea
 ```
 
-**E'** is a ordenation of de edges in **E**, ascending on weight. By iterating on **E'** every safe edge found
+1 - **E'** is a ordenation of de edges in **E**, ascending on weight. By iterating on **E'** every safe edge found
 must be an edge of **Ea**. Thus **E'** must be iterated only once.
+
+2 - **T** is the set of all trees present at each iteration. It is initialized with everey tree with one node of V.
+
+3 - Find the Tree in **T** where node **a** is located. **T1** must be different from **T2**, if they aren't it means
+that the current edge is not safe, so adding it will create a cycle.
+
+4 - If the current edge have node in each tree, it means that it unites two distinc trees. So adding it to **Ea** 
+implies that **T1** and **T2** must be replaced by the union of both.
 
 ### Prim Solution
 
