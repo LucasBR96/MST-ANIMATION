@@ -107,20 +107,21 @@ PRIM-MST( V , E )
     Ea = {}
 
     P = CONNECTING-EDGES( x , E )
+    UNVISITED = {}
 
-    while P != {}
+    while UNVISITED != {}
         e = ARG-MIN-WEIGHT( P , E )
         P = P - { e }
-
-        if not SAFE( e , Va )
+        
+        ( a , b ) = edge
+        if ( a in Va ) and ( b in Va )
             continue
         
         Ea = Ea + { e }
-
         y = { y' | y' in e , y not in Va }
-        Va = Va + y
+        Va = Va + { y }
+        UNNVISITED = UNVISITED - { y }
 
-        x = RANDOM( y )
         P' = CONNECTING-EDGES( x , E )
         P = P + P'
 
