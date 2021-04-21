@@ -1,76 +1,26 @@
 import string
+import sys
 
 # GLOBAL VARS --------------------------------------------------
 EXIT_CHAR = "*"
 END_CHAR = "-1"
 MAX_NODES = 100
 
+CHAR_TERMS = {
+    "a":"algo" , 
+    "r":"exec" , 
+    "b":"build"  
+}
+
+VALID_CHOICES = {
+    "algo" :[ "PRIM", "KRUSKAL" ],
+    "exec" :[ "DIRECT", "ITER" ],
+    "build":[ "CUSTOM" , "RANDOM"],
+}
+
 input_info = dict()
 
-# FUNCITONS ----------------------------------------------------
-def algo_choice():
-
-    print( "escolha o algoritimo:" )
-    print( "0 - kruskal" )
-    print( "1 - prim" )
-
-    while True:
-
-        c = input()
-        if c == EXIT_CHAR: raise InterruptedError
-
-        if c == "0":
-            input_info[ "algo" ] = "KRUSKAL"
-            break
-        elif c == "1":
-            input_info[ "algo" ] = "PRIM"
-            break
-        else:
-            print( "entrada invalida, digite novamente")
-    
-    print()
-
-def mode_choice():
-
-    print( "escolha o modo:" )
-    print( "0 - random" )
-    print( "1 - custom" )
-
-    while True:
-
-        c = input()
-        if c == EXIT_CHAR: raise InterruptedError
-
-        if c == "0":
-            input_info[ "build" ] = "RANDOM"
-            break
-        elif c == "1":
-            input_info[ "build" ] = "CUSTOM"
-            break
-        else:
-            print( "entrada invalida, digite novamente")
-    
-    print()
-
-def exec_choice():
-
-    print( "escolha a execução:" )
-    print( "0 - direta" ) # Runs a step after the other, pausing after pressing enter
-    print( "1 - iterativa" ) # Runs a step each time the key 'enter' is pressed
-
-    while True:
-
-        c = input()
-        if c == EXIT_CHAR: raise InterruptedError
-
-        if c == "0":
-            input_info[ "exec" ] = "DIRECT"
-            break
-        elif c == "1":
-            input_info[ "exec" ] = "ITERACT"
-            break
-        else:
-            print( "entrada invalida, digite novamente")
+# FUNCTIONS ---------------------------------------------------
 
 def random_build():
 
@@ -133,21 +83,34 @@ def custom_build( ):
         input_info[ "nodes" ].add( b )
     print()
 
-def get_user_input():
+def char_choice( ch , nome ):
 
-    try:
-        algo_choice()
-        mode_choice()
-        exec_choice()
-        if input_info["build"] == "RANDOM":
-            random_build()
-        elif input_info["build"] == "CUSTOM":
-            custom_build()
+    if ch not in CHAR_TERMS:
+        raise ValueError
+    term = CHAR_TERMS[ ch ]
+
+    nom = nome.upper()
+    if nom not in VALID_CHOICES[ term ]:
+        raise ValueError
+    
+    input_info[ term ] = nom
+    
+def main( args ):
+
+    i = 0
+    while i < len( args ):
+        m = args[i]
+        if m[ 0 ] == '-':
+            char_choice( m[1] , args[ i + 1 ] )
+            i += 2
+
+    build_fun = custom_build
+    if input_info[ "build" ] == "RANDOM":
+        build_fun = random_build
+    build_fun()
         
-        print( *input_info.items() , sep = "\n")
+    print( *input_info.items() , sep = "\n")
 
-    except InterruptedError:
-        return
 
 if __name__ == "__main__":
-    get_user_input()
+    main( sys.argv[ 1: ] )
