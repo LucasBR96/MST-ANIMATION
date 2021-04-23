@@ -5,6 +5,8 @@ import networkx as nx
 from matplotlib import animation, rc
 import matplotlib.pyplot as plt
 
+
+
 modo = 1
 KRUSKAL = 0
 PRIM    = 1
@@ -15,8 +17,8 @@ advance = True
 clicked = False
 fig, ax = plt.subplots(figsize=(10,8))
 
-Writer = animation.writers['ffmpeg']
-writer = Writer(fps=15, metadata=dict(artist='Me'), bitrate=1800)
+# Writer = animation.writers['ffmpeg']
+# writer = Writer(fps=15, metadata=dict(artist='Me'), bitrate=1800)
 
 def solution_generator():
     global advance, modo
@@ -30,7 +32,8 @@ def solution_generator():
         if(advance):
             if(modo == 1):
                 advance = False
-            if(monitor._next()):
+            seq = [ monitor._next() for i in range( 3 ) ]
+            if(seq.pop()):
                 yield pretty_vars(monitor.get_variables(), False)
             else:
                 break
